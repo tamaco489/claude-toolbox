@@ -1,0 +1,59 @@
+{
+  "title": "AIニュース要約レポート",
+  "date_format": "作成日: {date}",
+  "category_format": "■ {category}",
+  "source_format": "出典: {source} | {url}",
+  "no_articles_message": "取得した記事はありません。",
+  "styles": {
+    "title": {
+      "font_size": 18,
+      "color": "#1a1a1a",
+      "leading": 24,
+      "space_after": 12
+    },
+    "date": {
+      "font_size": 10,
+      "color": "#6b7280",
+      "leading": 12,
+      "space_after": 20
+    },
+    "category_header": {
+      "font_size": 14,
+      "color": "#2563eb",
+      "leading": 18,
+      "space_before": 16,
+      "space_after": 8
+    },
+    "article_title": {
+      "font_size": 11,
+      "color": "#1f2937",
+      "leading": 14,
+      "space_before": 8,
+      "space_after": 2
+    },
+    "article_body": {
+      "font_size": 10,
+      "color": "#374151",
+      "leading": 14,
+      "space_after": 4
+    },
+    "article_meta": {
+      "font_size": 8,
+      "color": "#6b7280",
+      "leading": 10,
+      "space_after": 8
+    }
+  },
+  "page": {
+    "size": "A4",
+    "margin_top": 20,
+    "margin_bottom": 20,
+    "margin_left": 20,
+    "margin_right": 20
+  },
+  "url_settings": {
+    "max_display_length": 60,
+    "truncate_suffix": "...",
+    "make_clickable": true
+  }
+}
