@@ -1,0 +1,5 @@
+{
+  "subject": "[{date_compact}] report-email by claude ai",
+  "body": "{recipient} 様\n\nお疲れ様です。\n\nレポートを添付にてお送りいたします。\nご確認のほどよろしくお願いいたします。\n\n添付ファイル:\n{filenames}",
+  "signature": "\n\n--\nこのメールは自動送信されています。"
+}

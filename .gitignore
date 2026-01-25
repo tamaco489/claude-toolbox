@@ -7,3 +7,4 @@ daily/
 .claude/skills/ai-news-summary/config/secrets.json
 .claude/skills/jp-it-news-summary/config/secrets.json
 .claude/skills/aws-blog-summary/config/secrets.json
+.claude/skills/report-email/config/secrets.json
