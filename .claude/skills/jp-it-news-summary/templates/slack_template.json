@@ -1,0 +1,14 @@
+{
+  "header": ":newspaper: 国内ITニュース要約 - {date}",
+  "message_format": "{message}",
+  "category_format": "*{category}*\n",
+  "article_format": "• {title}\n",
+  "max_articles_per_category": 3,
+  "max_title_length": 50,
+  "footer": "詳細はPDFをご確認ください。",
+  "settings": {
+    "show_categories": true,
+    "show_article_list": true,
+    "truncate_suffix": "..."
+  }
+}
