@@ -1,0 +1,14 @@
+カテゴリ,主なトピック
+コンピューティング,EC2、Lambda、ECS、EKS、Fargate、Batch など
+ストレージ,S3、EBS、EFS、Glacier、Storage Gateway など
+データベース,RDS、DynamoDB、Aurora、ElastiCache、Redshift など
+ネットワーキング,VPC、CloudFront、Route 53、API Gateway、ELB など
+セキュリティ,IAM、KMS、WAF、Shield、Cognito、Security Hub など
+機械学習・AI,SageMaker、Bedrock、Rekognition、Comprehend、Lex など
+分析,Athena、EMR、Kinesis、QuickSight、Glue など
+開発者ツール,CodeCommit、CodeBuild、CodeDeploy、CodePipeline、Cloud9 など
+マネジメント・ガバナンス,CloudWatch、CloudTrail、Config、Organizations、Control Tower など
+アプリケーション統合,SNS、SQS、Step Functions、EventBridge、AppSync など
+コスト最適化,Cost Explorer、Budgets、Savings Plans、Reserved Instances など
+新サービス発表,re:Invent、新サービス、新機能のアナウンス
+その他,上記に該当しないトピック

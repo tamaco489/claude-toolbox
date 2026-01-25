@@ -1,0 +1,14 @@
+{
+  "header": ":aws: AWSブログ要約 - {date}",
+  "message_format": "{message}",
+  "category_format": "*{category}*\n",
+  "article_format": "• {title}\n",
+  "max_articles_per_category": 5,
+  "max_title_length": 60,
+  "footer": "",
+  "settings": {
+    "show_categories": true,
+    "show_article_list": true,
+    "truncate_suffix": "..."
+  }
+}

@@ -1,0 +1,135 @@
+#!/usr/bin/env python3
+"""AWSブログ記事取得スクリプト"""
+
+import json
+import sys
+import os
+import re
+from datetime import datetime
+
+import requests
+from bs4 import BeautifulSoup
+from fake_useragent import UserAgent
+import feedparser
+
+TIMEOUT = 30
+HEADERS = {'User-Agent': UserAgent().chrome}
+MAX_ARTICLES = 5
+
+# AWSブログ日本語版RSSフィード
+AWS_BLOG_RSS = 'https://aws.amazon.com/jp/blogs/aws/feed/'
+SOURCE_NAME = 'AWS Blog'
+
+
+def _get_soup(url):
+    """URLからBeautifulSoupオブジェクトを取得"""
+    res = requests.get(url, headers=HEADERS, timeout=TIMEOUT)
+    res.raise_for_status()
+    return BeautifulSoup(res.text, 'html.parser')
+
+
+def _make_article(title, url, source, content=''):
+    """記事dictを生成"""
+    return {'title': title, 'url': url, 'source': source, 'content': content}
+
+
+def _extract_content(soup):
+    """HTMLから本文を抽出"""
+    # 不要要素を削除
+    for tag in soup(['script', 'style', 'nav', 'header', 'footer', 'aside', 'iframe', 'noscript']):
+        tag.decompose()
+
+    # 優先順位順に本文を探す
+    for finder in [
+        lambda: soup.find('article'),
+        lambda: soup.find('main'),
+        lambda: soup.find('div', class_=lambda x: x and 'blog-post' in str(x).lower()),
+        lambda: soup.find('div', class_=lambda x: x and 'content' in str(x).lower()),
+    ]:
+        elem = finder()
+        if elem:
+            return elem.get_text(separator='\n', strip=True)
+
+    # フォールバック: 段落から抽出
+    return '\n'.join(p.get_text(strip=True) for p in soup.find_all('p') if len(p.get_text(strip=True)) > 50)
+
+
+def fetch_content(url, max_len=5000):
+    """記事ページから本文を取得"""
+    try:
+        content = _extract_content(_get_soup(url))
+        if not content:
+            return ""
+        # クリーンアップ
+        content = re.sub(r'\n{3,}', '\n\n', content)
+        content = re.sub(r' {2,}', ' ', content).strip()
+        return content[:max_len] + "..." if len(content) > max_len else content
+    except Exception as e:
+        print(f"  Warning: {url}: {e}", file=sys.stderr)
+        return ""
+
+
+def fetch_aws_blog():
+    """AWSブログからRSSで記事を取得"""
+    articles = []
+
+    try:
+        print(f"Fetching from {AWS_BLOG_RSS}...", file=sys.stderr)
+        feed = feedparser.parse(AWS_BLOG_RSS)
+
+        if not feed.entries:
+            print("Warning: No entries found in RSS feed", file=sys.stderr)
+            return articles
+
+        for entry in feed.entries[:MAX_ARTICLES]:
+            title = entry.get('title', '')
+            link = entry.get('link', '')
+
+            # RSSからの要約を取得（あれば）
+            summary = entry.get('summary', '') or entry.get('description', '')
+            # HTMLタグを除去
+            if summary:
+                summary = BeautifulSoup(summary, 'html.parser').get_text(strip=True)
+                summary = summary[:500] if len(summary) > 500 else summary
+
+            article = _make_article(title, link, SOURCE_NAME, summary)
+            articles.append(article)
+
+        print(f"  Found {len(articles)} articles from RSS", file=sys.stderr)
+
+    except Exception as e:
+        print(f"Error fetching RSS: {e}", file=sys.stderr)
+
+    return articles
+
+
+def fetch_full_content(articles):
+    """各記事の全文を取得"""
+    for i, art in enumerate(articles):
+        if art['url']:
+            print(f"  Fetching full content {i+1}/{len(articles)}...", file=sys.stderr)
+            content = fetch_content(art['url'])
+            if content:
+                art['content'] = content
+    return articles
+
+
+def main():
+    # 記事取得
+    articles = fetch_aws_blog()
+
+    # 全文取得
+    if articles:
+        articles = fetch_full_content(articles)
+
+    # JSON出力
+    print(json.dumps({
+        'date': datetime.now().strftime('%Y-%m-%d'),
+        'source': SOURCE_NAME,
+        'source_url': AWS_BLOG_RSS,
+        'articles': articles
+    }, ensure_ascii=False, indent=2))
+
+
+if __name__ == '__main__':
+    main()
