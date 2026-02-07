@@ -6,6 +6,7 @@ import json
 import sys
 import os
 import re
+import time
 from urllib.parse import urljoin
 from datetime import datetime
 
@@ -17,14 +18,25 @@ import feedparser
 TIMEOUT = 30
 HEADERS = {'User-Agent': UserAgent().chrome}
 MAX_ARTICLES = 5
+MAX_RETRIES = 3
+RETRY_DELAY = 2
 
 
-def _get_soup(url):
-    """URLからBeautifulSoupオブジェクトを取得"""
-    res = requests.get(url, headers=HEADERS, timeout=TIMEOUT)
-    res.raise_for_status()
-    # res.content（バイト列）を渡すことでBeautifulSoupが文字コードを自動検出
-    return BeautifulSoup(res.content, 'html.parser')
+def _get_soup(url, retries=MAX_RETRIES):
+    """URLからBeautifulSoupオブジェクトを取得（リトライ付き）"""
+    for attempt in range(retries):
+        try:
+            res = requests.get(url, headers=HEADERS, timeout=TIMEOUT)
+            res.raise_for_status()
+            # res.content（バイト列）を渡すことでBeautifulSoupが文字コードを自動検出
+            return BeautifulSoup(res.content, 'html.parser')
+        except requests.exceptions.RequestException as e:
+            if attempt < retries - 1:
+                print(f"  Retry {attempt + 1}/{retries - 1}: {url}", file=sys.stderr)
+                time.sleep(RETRY_DELAY)
+            else:
+                raise e
+    return None
 
 
 def _make_article(title, url, source):
@@ -41,8 +53,8 @@ def _extract_content(soup):
         lambda: soup.find('article'),
         lambda: soup.find('main'),
         lambda: next((soup.find('div', class_=lambda x: x and c in str(x).lower())
-                      for c in ['content', 'post-content', 'article-content', 'entry-content']
-                      if soup.find('div', class_=lambda x: x and c in str(x).lower())), None),
+                        for c in ['content', 'post-content', 'article-content', 'entry-content']
+                        if soup.find('div', class_=lambda x: x and c in str(x).lower())), None),
     ]:
         elem = finder()
         if elem:
