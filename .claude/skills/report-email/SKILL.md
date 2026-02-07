@@ -66,7 +66,7 @@ Gmail SMTPを使用するには、Googleアカウントでアプリパスワー�
 ヒアリングで確認したファイルを添付してメールを送信します：
 
 ```bash
-python3 .claude/skills/report-email/scripts/send_email.py <file_paths> [to_email] [subject] [body]
+./.claude/skills/report-email/scripts/send_email.py <file_paths> [to_email] [subject] [body]
 ```
 
 **引数:**
@@ -80,13 +80,13 @@ python3 .claude/skills/report-email/scripts/send_email.py <file_paths> [to_email
 
 ```bash
 # 単一ファイル送信（デフォルト宛先）
-python3 .claude/skills/report-email/scripts/send_email.py output/report.pdf
+./.claude/skills/report-email/scripts/send_email.py output/report.pdf
 
 # 複数ファイル送信（最大5ファイル、異なる形式も可）
-python3 .claude/skills/report-email/scripts/send_email.py "output/report.pdf,output/data.xlsx,output/image.png"
+./.claude/skills/report-email/scripts/send_email.py "output/report.pdf,output/data.xlsx,output/image.png"
 
 # 宛先と件名を指定
-python3 .claude/skills/report-email/scripts/send_email.py "output/report.pdf" user@example.com "週次レポート"
+./.claude/skills/report-email/scripts/send_email.py "output/report.pdf" user@example.com "週次レポート"
 ```
 
 ---

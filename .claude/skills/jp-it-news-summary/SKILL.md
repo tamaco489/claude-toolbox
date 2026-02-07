@@ -71,7 +71,7 @@ pip install requests beautifulsoup4 feedparser reportlab fake-useragent
 以下のスクリプトを実行してニュースを取得してください：
 
 ```bash
-python .claude/skills/jp-it-news-summary/scripts/fetch_news.py
+./.claude/skills/jp-it-news-summary/scripts/fetch_news.py
 ```
 
 スクリプトはJSON形式で記事一覧を標準出力します。出力を `tmp/jp_raw_articles.json` に保存してください。
@@ -104,7 +104,7 @@ python .claude/skills/jp-it-news-summary/scripts/fetch_news.py
 要約データをPDFに変換してください：
 
 ```bash
-cat tmp/jp_summarized_articles.json | python .claude/skills/jp-it-news-summary/scripts/generate_pdf.py
+cat tmp/jp_summarized_articles.json | ./.claude/skills/jp-it-news-summary/scripts/generate_pdf.py
 ```
 
 PDFは `output/jp-it-news-YYYY-MM-DD.pdf` に出力されます。
@@ -114,7 +114,7 @@ PDFは `output/jp-it-news-YYYY-MM-DD.pdf` に出力されます。
 PDFファイルのパスとサマリーをSlackに投稿してください：
 
 ```bash
-python .claude/skills/jp-it-news-summary/scripts/post_slack.py output/jp-it-news-YYYY-MM-DD.pdf "本日の国内ITニュース要約です"
+./.claude/skills/jp-it-news-summary/scripts/post_slack.py output/jp-it-news-YYYY-MM-DD.pdf "本日の国内ITニュース要約です"
 ```
 
 ## 出力

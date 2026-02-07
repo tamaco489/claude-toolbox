@@ -63,7 +63,7 @@ pip install requests beautifulsoup4 feedparser reportlab fake-useragent
 以下のスクリプトを実行してAWSブログの最新記事を取得してください：
 
 ```bash
-python .claude/skills/aws-blog-summary/scripts/fetch_news.py
+./.claude/skills/aws-blog-summary/scripts/fetch_news.py
 ```
 
 スクリプトはJSON形式で記事一覧を標準出力します。出力を `tmp/aws_raw_articles.json` に保存してください。
@@ -96,7 +96,7 @@ python .claude/skills/aws-blog-summary/scripts/fetch_news.py
 要約データをPDFに変換してください：
 
 ```bash
-cat tmp/aws_summarized_articles.json | python .claude/skills/aws-blog-summary/scripts/generate_pdf.py
+cat tmp/aws_summarized_articles.json | ./.claude/skills/aws-blog-summary/scripts/generate_pdf.py
 ```
 
 PDFは `output/aws-blog-YYYY-MM-DD.pdf` に出力されます。
@@ -106,7 +106,7 @@ PDFは `output/aws-blog-YYYY-MM-DD.pdf` に出力されます。
 PDFファイルとサマリーをSlackに投稿してください：
 
 ```bash
-python .claude/skills/aws-blog-summary/scripts/post_slack.py output/aws-blog-YYYY-MM-DD.pdf "本日のAWSブログ要約です" tmp/aws_summarized_articles.json
+./.claude/skills/aws-blog-summary/scripts/post_slack.py output/aws-blog-YYYY-MM-DD.pdf "本日のAWSブログ要約です" tmp/aws_summarized_articles.json
 ```
 
 **注意**: Slack認証情報は `config/secrets.json` または環境変数で設定してください。

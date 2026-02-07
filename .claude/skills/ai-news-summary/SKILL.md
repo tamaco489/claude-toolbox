@@ -71,7 +71,7 @@ pip install requests beautifulsoup4 feedparser reportlab fake-useragent
 以下のスクリプトを実行してニュースを取得してください：
 
 ```bash
-python .claude/skills/ai-news-summary/scripts/fetch_news.py
+./.claude/skills/ai-news-summary/scripts/fetch_news.py
 ```
 
 スクリプトはJSON形式で記事一覧を標準出力します。出力を `tmp/raw_articles.json` に保存してください。
@@ -104,7 +104,7 @@ python .claude/skills/ai-news-summary/scripts/fetch_news.py
 要約データをPDFに変換してください：
 
 ```bash
-cat tmp/summarized_articles.json | python .claude/skills/ai-news-summary/scripts/generate_pdf.py
+cat tmp/summarized_articles.json | ./.claude/skills/ai-news-summary/scripts/generate_pdf.py
 ```
 
 PDFは `output/ai-news-YYYY-MM-DD.pdf` に出力されます。
@@ -114,7 +114,7 @@ PDFは `output/ai-news-YYYY-MM-DD.pdf` に出力されます。
 PDFファイルのパスとサマリーをSlackに投稿してください：
 
 ```bash
-python .claude/skills/ai-news-summary/scripts/post_slack.py output/ai-news-YYYY-MM-DD.pdf "本日のAIニュース要約です"
+./.claude/skills/ai-news-summary/scripts/post_slack.py output/ai-news-YYYY-MM-DD.pdf "本日のAIニュース要約です"
 ```
 
 **注意**: Slack Webhook URLは `post_slack.py` 内の `WEBHOOK_URL` 変数を設定してください。
