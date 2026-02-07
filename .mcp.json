@@ -16,7 +16,7 @@
         "--context",
         "ide-assistant",
         "--project",
-        "tamaco-blog",
+        "claude-toolbox",
         "--port",
         "32123"
       ],
