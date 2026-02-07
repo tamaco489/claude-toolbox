@@ -47,16 +47,24 @@ def _get_env_or(key, default=''):
 
 def load_secrets():
     """秘匿情報を読み込む（環境変数優先）"""
+    if not os.path.exists(SECRETS_PATH):
+        print(f"Warning: {SECRETS_PATH} not found. Using environment variables.", file=sys.stderr)
     secrets = _load_json(SECRETS_PATH, {
         'slack_bot_token': '',
         'slack_webhook_url': '',
         'slack_channel_id': ''
     })
-    return {
+    result = {
         'token': _get_env_or('SLACK_BOT_TOKEN', secrets.get('slack_bot_token', '')),
         'webhook': _get_env_or('SLACK_WEBHOOK_URL', secrets.get('slack_webhook_url', '')),
         'channel': _get_env_or('SLACK_CHANNEL_ID', secrets.get('slack_channel_id', ''))
     }
+    # 認証情報が全くない場合は警告
+    if not result['token'] and not result['webhook']:
+        print("Error: Slack credentials not configured.", file=sys.stderr)
+        print(f"  Set environment variables (SLACK_BOT_TOKEN, SLACK_CHANNEL_ID) or", file=sys.stderr)
+        print(f"  create {SECRETS_PATH} with slack_bot_token and slack_channel_id.", file=sys.stderr)
+    return result
 
 
 def load_template():

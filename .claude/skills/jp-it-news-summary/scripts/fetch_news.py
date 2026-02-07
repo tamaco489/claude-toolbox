@@ -23,7 +23,8 @@ def _get_soup(url):
     """URLからBeautifulSoupオブジェクトを取得"""
     res = requests.get(url, headers=HEADERS, timeout=TIMEOUT)
     res.raise_for_status()
-    return BeautifulSoup(res.text, 'html.parser')
+    # res.content（バイト列）を渡すことでBeautifulSoupが文字コードを自動検出
+    return BeautifulSoup(res.content, 'html.parser')
 
 
 def _make_article(title, url, source):
