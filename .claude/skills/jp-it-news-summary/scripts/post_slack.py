@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/Users/tamaco/Desktop/work/general/.venv/bin/python3
 """Slack投稿スクリプト"""
 
 import sys

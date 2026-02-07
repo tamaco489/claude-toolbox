@@ -2,6 +2,7 @@
 tmp/
 output/
 daily/
+.venv/
 
 # 秘匿情報
 .claude/skills/ai-news-summary/config/secrets.json

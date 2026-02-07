@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/Users/tamaco/Desktop/work/general/.venv/bin/python3
 """メール送信スクリプト - ファイルを添付してメールを送信（最大5ファイル）"""
 
 import sys

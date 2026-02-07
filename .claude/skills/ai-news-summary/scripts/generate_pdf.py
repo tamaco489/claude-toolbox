@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/Users/tamaco/Desktop/work/general/.venv/bin/python3
 """PDF生成スクリプト"""
 
 import json

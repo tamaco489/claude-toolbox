@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/Users/tamaco/Desktop/work/general/.venv/bin/python3
 """ニュース取得スクリプト"""
 
 import csv
