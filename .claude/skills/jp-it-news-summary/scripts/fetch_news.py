@@ -3,9 +3,10 @@
 
 import csv
 import json
-import sys
+import logging
 import os
 import re
+import sys
 import time
 from urllib.parse import urljoin
 from datetime import datetime
@@ -14,6 +15,14 @@ import requests
 from bs4 import BeautifulSoup
 from fake_useragent import UserAgent
 import feedparser
+
+# ロギング設定
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(levelname)s: %(message)s',
+    stream=sys.stderr
+)
+logger = logging.getLogger(__name__)
 
 TIMEOUT = 30
 HEADERS = {'User-Agent': UserAgent().chrome}
@@ -32,7 +41,7 @@ def _get_soup(url, retries=MAX_RETRIES):
             return BeautifulSoup(res.content, 'html.parser')
         except requests.exceptions.RequestException as e:
             if attempt < retries - 1:
-                print(f"  Retry {attempt + 1}/{retries - 1}: {url}", file=sys.stderr)
+                logger.warning(f"Retry {attempt + 1}/{retries - 1}: {url}")
                 time.sleep(RETRY_DELAY)
             else:
                 raise e
@@ -73,7 +82,7 @@ def fetch_content(url, max_len=3000):
         content = re.sub(r' {2,}', ' ', content).strip()
         return content[:max_len] + "..." if len(content) > max_len else content
     except Exception as e:
-        print(f"  Warning: {url}: {e}", file=sys.stderr)
+        logger.warning(f"{url}: {e}")
         return ""
 
 
@@ -104,7 +113,7 @@ def _fetch_by_pattern(url, name, link_filter, title_min_len=10):
             if len(articles) >= MAX_ARTICLES:
                 break
     except Exception as e:
-        print(f"Error fetching {name}: {e}", file=sys.stderr)
+        logger.error(f"Fetching {name}: {e}")
     return articles
 
 
@@ -126,7 +135,7 @@ def fetch_gigazine(url, name):
             if len(articles) >= MAX_ARTICLES:
                 break
     except Exception as e:
-        print(f"Error fetching {name}: {e}", file=sys.stderr)
+        logger.error(f"Fetching {name}: {e}")
     if not articles:
         return _fetch_by_pattern(url, name, lambda h: '/news/' in h and h.endswith('.html'))
     return articles
@@ -150,7 +159,7 @@ def fetch_publickey(url, name):
             if len(articles) >= MAX_ARTICLES:
                 break
     except Exception as e:
-        print(f"Error fetching {name}: {e}", file=sys.stderr)
+        logger.error(f"Fetching {name}: {e}")
     if not articles:
         return _fetch_by_pattern(url, name, lambda h: '/blog/' in h or '/archives/' in h)
     return articles
@@ -174,7 +183,7 @@ def fetch_ascii(url, name):
             if len(articles) >= MAX_ARTICLES:
                 break
     except Exception as e:
-        print(f"Error fetching {name}: {e}", file=sys.stderr)
+        logger.error(f"Fetching {name}: {e}")
     if not articles:
         return _fetch_by_pattern(url, name, lambda h: re.search(r'/\d+/', h) is not None)
     return articles
@@ -198,7 +207,7 @@ def fetch_itmedia(url, name):
             if len(articles) >= MAX_ARTICLES:
                 break
     except Exception as e:
-        print(f"Error fetching {name}: {e}", file=sys.stderr)
+        logger.error(f"Fetching {name}: {e}")
     if not articles:
         return _fetch_by_pattern(url, name, lambda h: '/articles/' in h)
     return articles
@@ -244,7 +253,7 @@ def fetch_articles(source, with_content=True):
     if with_content:
         for i, art in enumerate(articles):
             if art['url'] and not art.get('content'):
-                print(f"    Fetching {i+1}/{len(articles)}...", file=sys.stderr)
+                logger.info(f"Fetching content {i+1}/{len(articles)}...")
                 art['content'] = fetch_content(art['url'])
 
     return articles
@@ -258,10 +267,10 @@ def main():
     all_articles = []
 
     for src in sources:
-        print(f"Fetching from {src['name']}...", file=sys.stderr)
+        logger.info(f"Fetching from {src['name']}...")
         arts = fetch_articles(src)
         all_articles.extend(arts)
-        print(f"  Found {len(arts)} articles", file=sys.stderr)
+        logger.info(f"Found {len(arts)} articles")
 
     print(json.dumps({
         'date': datetime.now().strftime('%Y-%m-%d'),

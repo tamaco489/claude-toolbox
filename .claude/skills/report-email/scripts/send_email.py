@@ -1,10 +1,19 @@
 #!/Users/tamaco/Desktop/work/general/.venv/bin/python3
 """メール送信スクリプト - ファイルを添付してメールを送信（最大5ファイル）"""
 
-import sys
-import os
 import json
+import logging
+import os
 import smtplib
+import sys
+
+# ロギング設定
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(levelname)s: %(message)s',
+    stream=sys.stderr
+)
+logger = logging.getLogger(__name__)
 import mimetypes
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
@@ -50,7 +59,7 @@ def _load_json(path, default=None):
         with open(path, 'r', encoding='utf-8') as f:
             return json.load(f)
     except Exception as e:
-        print(f"Warning: {path}: {e}", file=sys.stderr)
+        logger.warning(f"{path}: {e}")
         return default or {}
 
 
@@ -145,11 +154,11 @@ def attach_file(msg, file_path):
 def send_email(secrets, to_emails, subject, body, file_paths):
     """メールを送信（複数ファイル対応）"""
     if not secrets['email']:
-        print("Error: SENDER_EMAIL is not set.", file=sys.stderr)
+        logger.error("SENDER_EMAIL is not set.")
         return False
 
     if not secrets['password']:
-        print("Error: SENDER_PASSWORD is not set.", file=sys.stderr)
+        logger.error("SENDER_PASSWORD is not set.")
         return False
 
     # 宛先をリストに変換
@@ -177,43 +186,43 @@ def send_email(secrets, to_emails, subject, body, file_paths):
         try:
             filename = attach_file(msg, file_path)
             attached_files.append(filename)
-            print(f"Attached: {filename}")
+            logger.info(f"Attached: {filename}")
         except (FileNotFoundError, ValueError) as e:
-            print(f"Error: {e}", file=sys.stderr)
+            logger.error(str(e))
             return False
 
     # SMTP送信
     try:
-        print(f"Connecting to {secrets['server']}:{secrets['port']}...")
+        logger.info(f"Connecting to {secrets['server']}:{secrets['port']}...")
         with smtplib.SMTP(secrets['server'], secrets['port'], timeout=30) as server:
             server.starttls()
             server.login(secrets['email'], secrets['password'])
             server.sendmail(secrets['email'], to_emails, msg.as_string())
 
-        print(f"Email sent successfully to: {', '.join(to_emails)}")
-        print(f"Attached files: {len(attached_files)}")
+        logger.info(f"Email sent successfully to: {', '.join(to_emails)}")
+        logger.info(f"Attached files: {len(attached_files)}")
         return True
 
     except smtplib.SMTPAuthenticationError:
-        print("Error: Authentication failed. Check your email and app password.", file=sys.stderr)
+        logger.error("Authentication failed. Check your email and app password.")
         return False
     except smtplib.SMTPException as e:
-        print(f"Error: SMTP error - {e}", file=sys.stderr)
+        logger.error(f"SMTP error - {e}")
         return False
     except Exception as e:
-        print(f"Error: {e}", file=sys.stderr)
+        logger.error(str(e))
         return False
 
 
 def main():
     if len(sys.argv) < 2:
-        print("Usage: send_email.py <file_paths> [to_email] [subject] [body]", file=sys.stderr)
-        print("  file_paths: File path(s), comma-separated for multiple (max 5)", file=sys.stderr)
-        print("  to_email:   Recipient email address(es) (optional if default set)", file=sys.stderr)
-        print("  subject:    Email subject (optional, uses template if omitted)", file=sys.stderr)
-        print("  body:       Email body (optional, uses template if omitted)", file=sys.stderr)
-        print("", file=sys.stderr)
-        print("Supported formats: PDF, Excel, CSV, PowerPoint, Word, images, etc.", file=sys.stderr)
+        logger.error("Usage: send_email.py <file_paths> [to_email] [subject] [body]")
+        logger.error("  file_paths: File path(s), comma-separated for multiple (max 5)")
+        logger.error("  to_email:   Recipient email address(es) (optional if default set)")
+        logger.error("  subject:    Email subject (optional, uses template if omitted)")
+        logger.error("  body:       Email body (optional, uses template if omitted)")
+        logger.error("")
+        logger.error("Supported formats: PDF, Excel, CSV, PowerPoint, Word, images, etc.")
         sys.exit(1)
 
     # ファイルパスをパース（カンマ区切り）
@@ -221,7 +230,7 @@ def main():
 
     # 最大5ファイルまで
     if len(file_paths) > MAX_ATTACHMENTS:
-        print(f"Error: Maximum {MAX_ATTACHMENTS} attachments allowed. Got {len(file_paths)}.", file=sys.stderr)
+        logger.error(f"Maximum {MAX_ATTACHMENTS} attachments allowed. Got {len(file_paths)}.")
         sys.exit(1)
 
     secrets = load_secrets()
@@ -229,7 +238,7 @@ def main():
     # 宛先: 引数 > デフォルト設定
     to_email = sys.argv[2] if len(sys.argv) > 2 else secrets['default_recipient']
     if not to_email:
-        print("Error: No recipient specified. Provide to_email or set default_recipient.", file=sys.stderr)
+        logger.error("No recipient specified. Provide to_email or set default_recipient.")
         sys.exit(1)
 
     tpl = load_template()

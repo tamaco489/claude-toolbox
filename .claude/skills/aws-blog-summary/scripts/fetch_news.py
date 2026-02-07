@@ -2,9 +2,10 @@
 """AWSブログ記事取得スクリプト"""
 
 import json
-import sys
+import logging
 import os
 import re
+import sys
 import time
 from datetime import datetime
 
@@ -12,6 +13,14 @@ import requests
 from bs4 import BeautifulSoup
 from fake_useragent import UserAgent
 import feedparser
+
+# ロギング設定
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(levelname)s: %(message)s',
+    stream=sys.stderr
+)
+logger = logging.getLogger(__name__)
 
 TIMEOUT = 30
 HEADERS = {'User-Agent': UserAgent().chrome}
@@ -34,7 +43,7 @@ def _get_soup(url, retries=MAX_RETRIES):
             return BeautifulSoup(res.content, 'html.parser')
         except requests.exceptions.RequestException as e:
             if attempt < retries - 1:
-                print(f"  Retry {attempt + 1}/{retries - 1}: {url}", file=sys.stderr)
+                logger.warning(f"Retry {attempt + 1}/{retries - 1}: {url}")
                 time.sleep(RETRY_DELAY)
             else:
                 raise e
@@ -78,7 +87,7 @@ def fetch_content(url, max_len=5000):
         content = re.sub(r' {2,}', ' ', content).strip()
         return content[:max_len] + "..." if len(content) > max_len else content
     except Exception as e:
-        print(f"  Warning: {url}: {e}", file=sys.stderr)
+        logger.warning(f"{url}: {e}")
         return ""
 
 
@@ -87,11 +96,11 @@ def fetch_aws_blog():
     articles = []
 
     try:
-        print(f"Fetching from {AWS_BLOG_RSS}...", file=sys.stderr)
+        logger.info(f"Fetching from {AWS_BLOG_RSS}...")
         feed = feedparser.parse(AWS_BLOG_RSS)
 
         if not feed.entries:
-            print("Warning: No entries found in RSS feed", file=sys.stderr)
+            logger.warning("No entries found in RSS feed")
             return articles
 
         for entry in feed.entries[:MAX_ARTICLES]:
@@ -108,10 +117,10 @@ def fetch_aws_blog():
             article = _make_article(title, link, SOURCE_NAME, summary)
             articles.append(article)
 
-        print(f"  Found {len(articles)} articles from RSS", file=sys.stderr)
+        logger.info(f"Found {len(articles)} articles from RSS")
 
     except Exception as e:
-        print(f"Error fetching RSS: {e}", file=sys.stderr)
+        logger.error(f"Fetching RSS: {e}")
 
     return articles
 
@@ -120,7 +129,7 @@ def fetch_full_content(articles):
     """各記事の全文を取得"""
     for i, art in enumerate(articles):
         if art['url']:
-            print(f"  Fetching full content {i+1}/{len(articles)}...", file=sys.stderr)
+            logger.info(f"Fetching full content {i+1}/{len(articles)}...")
             content = fetch_content(art['url'])
             if content:
                 art['content'] = content

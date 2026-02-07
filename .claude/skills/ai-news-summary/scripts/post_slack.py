@@ -1,13 +1,22 @@
 #!/Users/tamaco/Desktop/work/general/.venv/bin/python3
 """Slack投稿スクリプト"""
 
-import sys
-import os
 import json
+import logging
+import os
+import sys
 from datetime import datetime
 from collections import defaultdict
 
 import requests
+
+# ロギング設定
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(levelname)s: %(message)s',
+    stream=sys.stderr
+)
+logger = logging.getLogger(__name__)
 
 # パス設定
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -36,7 +45,7 @@ def _load_json(path, default=None):
         with open(path, 'r', encoding='utf-8') as f:
             return json.load(f)
     except Exception as e:
-        print(f"Warning: {path}: {e}", file=sys.stderr)
+        logger.warning(f"{path}: {e}")
         return default or {}
 
 
@@ -48,7 +57,7 @@ def _get_env_or(key, default=''):
 def load_secrets():
     """秘匿情報を読み込む（環境変数優先）"""
     if not os.path.exists(SECRETS_PATH):
-        print(f"Warning: {SECRETS_PATH} not found. Using environment variables.", file=sys.stderr)
+        logger.warning(f"{SECRETS_PATH} not found. Using environment variables.")
     secrets = _load_json(SECRETS_PATH, {
         'slack_bot_token': '',
         'slack_webhook_url': '',
@@ -61,9 +70,9 @@ def load_secrets():
     }
     # 認証情報が全くない場合は警告
     if not result['token'] and not result['webhook']:
-        print("Error: Slack credentials not configured.", file=sys.stderr)
-        print(f"  Set environment variables (SLACK_BOT_TOKEN, SLACK_CHANNEL_ID) or", file=sys.stderr)
-        print(f"  create {SECRETS_PATH} with slack_bot_token and slack_channel_id.", file=sys.stderr)
+        logger.error("Slack credentials not configured.")
+        logger.error(f"  Set environment variables (SLACK_BOT_TOKEN, SLACK_CHANNEL_ID) or")
+        logger.error(f"  create {SECRETS_PATH} with slack_bot_token and slack_channel_id.")
     return result
 
 
@@ -113,10 +122,10 @@ def format_summary(tpl, msg, summary, date):
 def upload_file(path, channel, comment, token):
     """Slack APIでファイルをアップロード"""
     if not token:
-        print("Error: SLACK_BOT_TOKEN is not set.", file=sys.stderr)
+        logger.error("SLACK_BOT_TOKEN is not set.")
         return False
     if not os.path.exists(path):
-        print(f"Error: File not found: {path}", file=sys.stderr)
+        logger.error(f"File not found: {path}")
         return False
 
     name = os.path.basename(path)
@@ -131,14 +140,14 @@ def upload_file(path, channel, comment, token):
     ).json()
 
     if not res.get("ok"):
-        print(f"Error: {res.get('error', 'Unknown')}", file=sys.stderr)
+        logger.error(f"Getting upload URL: {res.get('error', 'Unknown')}")
         return False
 
     # Step 2: ファイルアップロード
     with open(path, "rb") as f:
         upload_res = requests.post(res["upload_url"], files={"file": (name, f, "application/pdf")}, timeout=60)
     if upload_res.status_code != 200:
-        print(f"Error uploading: {upload_res.status_code}", file=sys.stderr)
+        logger.error(f"Uploading file: {upload_res.status_code}")
         return False
 
     # Step 3: アップロード完了
@@ -150,17 +159,17 @@ def upload_file(path, channel, comment, token):
     ).json()
 
     if not complete_res.get("ok"):
-        print(f"Error: {complete_res.get('error', 'Unknown')}", file=sys.stderr)
+        logger.error(f"Completing upload: {complete_res.get('error', 'Unknown')}")
         return False
 
-    print(f"Uploaded {name} to Slack!")
+    logger.info(f"Uploaded {name} to Slack!")
     return True
 
 
 def post_webhook(tpl, msg, summary, date, webhook):
     """Webhookでメッセージ投稿"""
     if not webhook:
-        print("Error: SLACK_WEBHOOK_URL is not set.", file=sys.stderr)
+        logger.error("SLACK_WEBHOOK_URL is not set.")
         return False
 
     header = tpl.get('header', DEFAULT_TEMPLATE['header']).format(date=date)
@@ -178,7 +187,7 @@ def post_webhook(tpl, msg, summary, date, webhook):
         requests.post(webhook, json={"blocks": blocks, "text": header}, headers={'Content-Type': 'application/json'}, timeout=30).raise_for_status()
         return True
     except requests.exceptions.RequestException as e:
-        print(f"Error: {e}", file=sys.stderr)
+        logger.error(f"Posting to webhook: {e}")
         return False
 
 
@@ -193,13 +202,13 @@ def load_summary(path):
             summary[art.get('category', '未分類')].append(art)
         return dict(summary)
     except Exception as e:
-        print(f"Warning: {e}", file=sys.stderr)
+        logger.warning(f"Loading summary: {e}")
         return None
 
 
 def main():
     if len(sys.argv) < 2:
-        print("Usage: post_slack.py <pdf> [message] [json] [channel]", file=sys.stderr)
+        logger.error("Usage: post_slack.py <pdf> [message] [json] [channel]")
         sys.exit(1)
 
     pdf = sys.argv[1]
@@ -215,11 +224,11 @@ def main():
 
     # PDF アップロード試行
     if os.path.exists(pdf) and upload_file(pdf, channel, text, secrets['token']):
-        print("Success!")
+        logger.info("Success!")
         sys.exit(0)
 
     # フォールバック: Webhook
-    print("Falling back to webhook...", file=sys.stderr)
+    logger.info("Falling back to webhook...")
     ok = post_webhook(tpl, msg, summary, date, secrets['webhook'])
     sys.exit(0 if ok else 1)
 

@@ -2,9 +2,18 @@
 """PDF生成スクリプト（AWSブログ用）"""
 
 import json
-import sys
+import logging
 import os
+import sys
 from datetime import datetime
+
+# ロギング設定
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(levelname)s: %(message)s',
+    stream=sys.stderr
+)
+logger = logging.getLogger(__name__)
 from collections import defaultdict
 
 from reportlab.lib.pagesizes import A4
@@ -76,7 +85,7 @@ def _load_json(path, default=None):
         with open(path, 'r', encoding='utf-8') as f:
             return json.load(f)
     except Exception as e:
-        print(f"Warning: {path}: {e}", file=sys.stderr)
+        logger.warning(f"{path}: {e}")
         return default or {}
 
 
@@ -94,7 +103,7 @@ def register_fonts():
         pdfmetrics.registerFont(UnicodeCIDFont(JP_FONT))
         return True
     except Exception as e:
-        print(f"Warning: Font registration failed: {e}", file=sys.stderr)
+        logger.warning(f"Font registration failed: {e}")
         return False
 
 
@@ -210,7 +219,7 @@ def main():
     try:
         data = json.loads(sys.stdin.read())
     except json.JSONDecodeError as e:
-        print(f"Error: Invalid JSON: {e}", file=sys.stderr)
+        logger.error(f"Invalid JSON: {e}")
         sys.exit(1)
 
     # 出力パス
@@ -222,9 +231,9 @@ def main():
 
     try:
         result = generate_pdf(data, out_path, tpl)
-        print(f"PDF generated: {result}")
+        logger.info(f"PDF generated: {result}")
     except Exception as e:
-        print(f"Error generating PDF: {e}", file=sys.stderr)
+        logger.error(f"Generating PDF: {e}")
         sys.exit(1)
 
 
