@@ -1,3 +1,5 @@
+[日本語](README.ja.md)
+
 # Claude Code Skills
 
 Custom skills for Claude Code to automate news aggregation and reporting.

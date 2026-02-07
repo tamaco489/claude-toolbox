@@ -1,3 +1,5 @@
+[English](README.md)
+
 # Claude Code スキル集
 
 ニュース収集・レポート作成を自動化する Claude Code 用カスタムスキル。
