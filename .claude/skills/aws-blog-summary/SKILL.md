@@ -50,7 +50,15 @@ allowed-tools: Bash, Read, Write, WebFetch
 
 ## 実行手順
 
-### 1. Pythonパッケージの確認
+### 1. 一時ファイルのクリーンアップ
+
+前回実行時の一時ファイルが残っている場合に備え、最初に削除してください：
+
+```bash
+rm -f tmp/aws_raw_articles.json tmp/aws_summarized_articles.json
+```
+
+### 2. Pythonパッケージの確認
 
 まず、必要なパッケージがインストールされているか確認してください：
 
@@ -58,7 +66,7 @@ allowed-tools: Bash, Read, Write, WebFetch
 pip install requests beautifulsoup4 feedparser reportlab fake-useragent
 ```
 
-### 2. ニュース取得
+### 3. ニュース取得
 
 以下のスクリプトを実行してAWSブログの最新記事を取得してください：
 
@@ -68,7 +76,7 @@ pip install requests beautifulsoup4 feedparser reportlab fake-useragent
 
 スクリプトはJSON形式で記事一覧を標準出力します。出力を `tmp/aws_raw_articles.json` に保存してください。
 
-### 3. 記事の要約・カテゴリー分類
+### 4. 記事の要約・カテゴリー分類
 
 取得した記事を読み、以下の作業を行ってください：
 
@@ -91,7 +99,7 @@ pip install requests beautifulsoup4 feedparser reportlab fake-useragent
 }
 ```
 
-### 4. PDF生成
+### 5. PDF生成
 
 要約データをPDFに変換してください：
 
@@ -101,7 +109,7 @@ cat tmp/aws_summarized_articles.json | ./.claude/skills/aws-blog-summary/scripts
 
 PDFは `output/aws-blog-YYYY-MM-DD.pdf` に出力されます。
 
-### 5. Slack投稿
+### 6. Slack投稿
 
 PDFファイルとサマリーをSlackに投稿してください：
 

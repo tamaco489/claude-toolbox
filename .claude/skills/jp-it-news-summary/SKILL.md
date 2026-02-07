@@ -51,7 +51,15 @@ allowed-tools: Bash, Read, Write, WebFetch
 
 ## 実行手順
 
-### 1. Pythonパッケージの確認
+### 1. 一時ファイルのクリーンアップ
+
+前回実行時の一時ファイルが残っている場合に備え、最初に削除してください：
+
+```bash
+rm -f tmp/jp_raw_articles.json tmp/jp_summarized_articles.json
+```
+
+### 2. Pythonパッケージの確認
 
 まず、必要なパッケージがインストールされているか確認してください：
 
@@ -59,14 +67,14 @@ allowed-tools: Bash, Read, Write, WebFetch
 pip install requests beautifulsoup4 feedparser reportlab fake-useragent
 ```
 
-### 2. ニュースソースの読み込み
+### 3. ニュースソースの読み込み
 
 テンプレートCSVファイルを読み込んでください：
 
 - `.claude/skills/jp-it-news-summary/templates/news_sources.csv` - ニュースソースURL
 - `.claude/skills/jp-it-news-summary/templates/categories.csv` - カテゴリ分類
 
-### 3. ニュース取得
+### 4. ニュース取得
 
 以下のスクリプトを実行してニュースを取得してください：
 
@@ -76,7 +84,7 @@ pip install requests beautifulsoup4 feedparser reportlab fake-useragent
 
 スクリプトはJSON形式で記事一覧を標準出力します。出力を `tmp/jp_raw_articles.json` に保存してください。
 
-### 4. 記事の要約・カテゴリー分類
+### 5. 記事の要約・カテゴリー分類
 
 取得した記事を読み、以下の作業を行ってください：
 
@@ -99,7 +107,7 @@ pip install requests beautifulsoup4 feedparser reportlab fake-useragent
 }
 ```
 
-### 5. PDF生成
+### 6. PDF生成
 
 要約データをPDFに変換してください：
 
@@ -109,7 +117,7 @@ cat tmp/jp_summarized_articles.json | ./.claude/skills/jp-it-news-summary/script
 
 PDFは `output/jp-it-news-YYYY-MM-DD.pdf` に出力されます。
 
-### 6. Slack投稿
+### 7. Slack投稿
 
 PDFファイルのパスとサマリーをSlackに投稿してください：
 
@@ -133,8 +141,8 @@ PDFファイルのパスとサマリーをSlackに投稿してください：
 
 運用する中で、新たに取得したいニュースサイトや記事ソースが出てきた場合は、以下のテンプレートファイルを更新してください：
 
-| 変更内容                   | 対象ファイル                                                  |
-| -------------------------- | ------------------------------------------------------------- |
+| 変更内容                   | 対象ファイル                                                   |
+| -------------------------- | -------------------------------------------------------------- |
 | ニュースソースの追加・削除 | `.claude/skills/jp-it-news-summary/templates/news_sources.csv` |
 | カテゴリの追加・変更       | `.claude/skills/jp-it-news-summary/templates/categories.csv`   |
 
