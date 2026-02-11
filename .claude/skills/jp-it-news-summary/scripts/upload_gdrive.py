@@ -23,7 +23,9 @@ logger = logging.getLogger(__name__)
 # パス設定
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 SKILL_DIR = os.path.dirname(SCRIPT_DIR)
-SECRETS_PATH = os.path.join(SKILL_DIR, 'config', 'secrets.json')
+SKILL_NAME = os.path.basename(SKILL_DIR)
+PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(SKILL_DIR)))
+SETTINGS_PATH = os.path.join(PROJECT_ROOT, 'secrets', 'settings.json')
 
 SCOPES = ['https://www.googleapis.com/auth/drive.file']
 
@@ -45,11 +47,19 @@ def _get_env_or(key, default=''):
     return os.environ.get(key) or default
 
 
+def _load_skill_config():
+    """secret/settings.json から common + スキル別設定をマージして返す"""
+    data = _load_json(SETTINGS_PATH)
+    common = data.get('common', {})
+    skill = data.get('skills', {}).get(SKILL_NAME, {})
+    return {**common, **skill}
+
+
 def load_secrets():
     """秘匿情報を読み込む（環境変数優先）"""
-    if not os.path.exists(SECRETS_PATH):
-        logger.warning(f"{SECRETS_PATH} not found. Using environment variables.")
-    secrets = _load_json(SECRETS_PATH)
+    if not os.path.exists(SETTINGS_PATH):
+        logger.warning(f"{SETTINGS_PATH} not found. Using environment variables.")
+    secrets = _load_skill_config()
     result = {
         'client_secret': _get_env_or(
             'GDRIVE_CLIENT_SECRET',
@@ -63,11 +73,11 @@ def load_secrets():
     if not result['client_secret']:
         logger.error("Google Drive OAuth client secret is not configured.")
         logger.error(f"  Set GDRIVE_CLIENT_SECRET env var or")
-        logger.error(f"  add gdrive_client_secret to {SECRETS_PATH}")
+        logger.error(f"  configure {SETTINGS_PATH}")
     if not result['folder_id']:
         logger.error("Google Drive folder ID is not configured.")
         logger.error(f"  Set GDRIVE_FOLDER_ID env var or")
-        logger.error(f"  add gdrive_folder_id to {SECRETS_PATH}")
+        logger.error(f"  configure {SETTINGS_PATH}")
     return result
 
 

@@ -21,8 +21,10 @@ logger = logging.getLogger(__name__)
 # パス設定
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 SKILL_DIR = os.path.dirname(SCRIPT_DIR)
+SKILL_NAME = os.path.basename(SKILL_DIR)
+PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(SKILL_DIR)))
 TEMPLATE_PATH = os.path.join(SKILL_DIR, 'templates', 'slack_template.json')
-SECRETS_PATH = os.path.join(SKILL_DIR, 'config', 'secrets.json')
+SETTINGS_PATH = os.path.join(PROJECT_ROOT, 'secrets', 'settings.json')
 
 # デフォルトテンプレート
 DEFAULT_TEMPLATE = {
@@ -54,15 +56,19 @@ def _get_env_or(key, default=''):
     return os.environ.get(key) or default
 
 
+def _load_skill_config():
+    """secret/settings.json から common + スキル別設定をマージして返す"""
+    data = _load_json(SETTINGS_PATH)
+    common = data.get('common', {})
+    skill = data.get('skills', {}).get(SKILL_NAME, {})
+    return {**common, **skill}
+
+
 def load_secrets():
     """秘匿情報を読み込む（環境変数優先）"""
-    if not os.path.exists(SECRETS_PATH):
-        logger.warning(f"{SECRETS_PATH} not found. Using environment variables.")
-    secrets = _load_json(SECRETS_PATH, {
-        'slack_bot_token': '',
-        'slack_webhook_url': '',
-        'slack_channel_id': ''
-    })
+    if not os.path.exists(SETTINGS_PATH):
+        logger.warning(f"{SETTINGS_PATH} not found. Using environment variables.")
+    secrets = _load_skill_config()
     result = {
         'token': _get_env_or('SLACK_BOT_TOKEN', secrets.get('slack_bot_token', '')),
         'webhook': _get_env_or('SLACK_WEBHOOK_URL', secrets.get('slack_webhook_url', '')),
@@ -72,7 +78,7 @@ def load_secrets():
     if not result['token'] and not result['webhook']:
         logger.error("Slack credentials not configured.")
         logger.error(f"  Set environment variables (SLACK_BOT_TOKEN, SLACK_CHANNEL_ID) or")
-        logger.error(f"  create {SECRETS_PATH} with slack_bot_token and slack_channel_id.")
+        logger.error(f"  configure {SETTINGS_PATH}")
     return result
 
 
