@@ -116,7 +116,7 @@ PDFファイルとサマリーをSlackに投稿してください：
 ./.claude/skills/aws-blog-summary/scripts/post_slack.py output/aws-blog-YYYY-MM-DD.pdf "本日のAWSブログ要約です" tmp/aws_summarized_articles.json
 ```
 
-**注意**: Slack認証情報は `config/secrets.json` または環境変数で設定してください。
+**注意**: Slack 認証情報は `secrets/settings.json` または環境変数で設定してください。
 
 ### 7. Google Driveアップロード
 
@@ -126,7 +126,7 @@ PDFファイルを Google Drive の指定フォルダにアップロードして
 ./.claude/skills/aws-blog-summary/scripts/upload_gdrive.py output/aws-blog-YYYY-MM-DD.pdf
 ```
 
-**注意**: Google Drive の認証情報 (OAuth クライアントシークレットのパス、フォルダ ID) は `config/secrets.json` または環境変数で設定してください。初回実行時はブラウザで Google アカウント認証が必要です。同名ファイルが既に存在する場合は上書きされます。
+**注意**: Google Drive の認証情報 (OAuth クライアントシークレットのパス、フォルダ ID) は `secrets/settings.json` または環境変数で設定してください。初回実行時はブラウザで Google アカウント認証が必要です。同名ファイルが既に存在する場合は上書きされます。
 
 ## 出力
 
@@ -136,7 +136,7 @@ PDFファイルを Google Drive の指定フォルダにアップロードして
 ## トラブルシューティング
 
 - PDFのフォントが表示されない場合: macOS以外の環境では `generate_pdf.py` 内のフォントパスを変更してください
-- Slack投稿が失敗する場合: `config/secrets.json` の設定を確認してください
+- Slack投稿が失敗する場合: `secrets/settings.json` の設定を確認してください
 - 記事が取得できない場合: AWSブログのRSSフィードが変更された可能性があります
 
 ## 補足事項

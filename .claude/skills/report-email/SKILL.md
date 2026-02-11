@@ -16,7 +16,7 @@ Gmail SMTPを使用するには、Googleアカウントでアプリパスワー�
 1. [Googleアカウント](https://myaccount.google.com/) にアクセス
 2. 「セキュリティ」→「2段階認証プロセス」を有効化
 3. 「アプリパスワード」を選択し、新しいパスワードを生成
-4. 生成された16桁のパスワードを `config/secrets.json` に設定
+4. 生成された16桁のパスワードを `secrets/settings.json` に設定
 
 **注意**: 通常のGoogleパスワードではSMTP認証はできません。必ずアプリパスワードを使用してください。
 
@@ -92,7 +92,7 @@ Gmail SMTPを使用するには、Googleアカウントでアプリパスワー�
 
 ## 設定リファレンス
 
-### config/secrets.json
+### secrets/settings.json (skills.report-email)
 
 | キー                | 説明                                          |
 | ------------------- | --------------------------------------------- |
@@ -140,5 +140,5 @@ Gmail SMTPを使用するには、Googleアカウントでアプリパスワー�
 
 ## セキュリティ上の注意
 
-- `secrets.json` はGitにコミットしないでください（`.gitignore` に追加推奨）
+- `secrets/` ディレクトリは `.gitignore` で管理対象外です
 - アプリパスワードは定期的に更新することを推奨します

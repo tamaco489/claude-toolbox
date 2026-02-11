@@ -124,7 +124,7 @@ PDFファイルのパスとサマリーをSlackに投稿してください：
 ./.claude/skills/ai-news-summary/scripts/post_slack.py output/ai-news-YYYY-MM-DD.pdf "本日のAIニュース要約です"
 ```
 
-**注意**: Slack Webhook URLは `post_slack.py` 内の `WEBHOOK_URL` 変数を設定してください。
+**注意**: Slack 認証情報は `secrets/settings.json` または環境変数で設定してください。
 
 ### 8. Google Driveアップロード
 
@@ -134,7 +134,7 @@ PDFファイルを Google Drive の指定フォルダにアップロードして
 ./.claude/skills/ai-news-summary/scripts/upload_gdrive.py output/ai-news-YYYY-MM-DD.pdf
 ```
 
-**注意**: Google Drive の認証情報 (OAuth クライアントシークレットのパス、フォルダ ID) は `config/secrets.json` または環境変数で設定してください。初回実行時はブラウザで Google アカウント認証が必要です。同名ファイルが既に存在する場合は上書きされます。
+**注意**: Google Drive の認証情報 (OAuth クライアントシークレットのパス、フォルダ ID) は `secrets/settings.json` または環境変数で設定してください。初回実行時はブラウザで Google アカウント認証が必要です。同名ファイルが既に存在する場合は上書きされます。
 
 ## 出力
 

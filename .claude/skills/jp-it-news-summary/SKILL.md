@@ -132,7 +132,7 @@ PDFファイルを Google Drive の指定フォルダにアップロードして
 ./.claude/skills/jp-it-news-summary/scripts/upload_gdrive.py output/jp-it-news-YYYY-MM-DD.pdf
 ```
 
-**注意**: Google Drive の認証情報 (OAuth クライアントシークレットのパス、フォルダ ID) は `config/secrets.json` または環境変数で設定してください。初回実行時はブラウザで Google アカウント認証が必要です。同名ファイルが既に存在する場合は上書きされます。
+**注意**: Google Drive の認証情報 (OAuth クライアントシークレットのパス、フォルダ ID) は `secrets/settings.json` または環境変数で設定してください。初回実行時はブラウザで Google アカウント認証が必要です。同名ファイルが既に存在する場合は上書きされます。
 
 ## 出力
 
@@ -142,7 +142,7 @@ PDFファイルを Google Drive の指定フォルダにアップロードして
 ## トラブルシューティング
 
 - PDFのフォントが表示されない場合: macOS以外の環境では `generate_pdf.py` 内のフォントパスを変更してください
-- Slack投稿が失敗する場合: `config/secrets.json` の設定を確認してください
+- Slack投稿が失敗する場合: `secrets/settings.json` の設定を確認してください
 
 ## 補足事項
 
