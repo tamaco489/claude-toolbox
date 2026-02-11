@@ -3,9 +3,7 @@ tmp/
 output/
 daily/
 .venv/
+__pycache__/
 
-# 秘匿情報
-.claude/skills/ai-news-summary/config/secrets.json
-.claude/skills/jp-it-news-summary/config/secrets.json
-.claude/skills/aws-blog-summary/config/secrets.json
-.claude/skills/report-email/config/secrets.json
+secrets/*
+!secrets/settings.example.json

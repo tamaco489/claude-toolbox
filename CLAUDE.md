@@ -12,16 +12,19 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 python3 -m venv .venv && source .venv/bin/activate && pip install -r requirements.txt
 ```
 
-各スキルの `config/secrets.json` にSlack/SMTP認証情報を設定（`secrets.example.json` を参照）。
+`secrets/settings.json` に認証情報を設定 (`settings.example.json` を参照、gitignore 対象)。
 
 ## Structure
 
-```
+```text
 .claude/skills/{skill-name}/
 ├── SKILL.md       # 実行手順・制約（スキル実行時はこれに従う）
-├── config/        # secrets.json（gitignore対象）
 ├── scripts/       # Python スクリプト群
-└── templates/     # カテゴリ定義、PDF/Slack/メールテンプレート
+├── templates/     # カテゴリ定義、PDF/Slack/メールテンプレート
+secrets/                       # 認証情報・OAuth トークン等（gitignore 対象）
+├── settings.json              # 全スキル共通の設定ファイル
+├── client_secret_xxx.json     # GCP OAuth クライアントシークレット
+└── gdrive_token.json          # Google Drive トークン
 ```
 
 ## Skills

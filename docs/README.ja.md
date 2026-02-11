@@ -1,8 +1,8 @@
+# Claude Toolbox
+
 [English](README.md)
 
-# Claude Code スキル集
-
-ニュース収集・レポート作成を自動化する Claude Code 用カスタムスキル。
+Claude Code 用の自動化ツール・カスタムスキル集。
 
 ## スキル一覧
 
@@ -20,7 +20,3 @@ python3 -m venv .venv && source .venv/bin/activate && pip install -r requirement
 ```
 
 各スキルの `config/secrets.json` に認証情報を設定（`secrets.example.json` を参照）。
-
-## ライセンス
-
-Private

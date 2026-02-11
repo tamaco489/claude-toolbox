@@ -1,8 +1,8 @@
+# Claude Toolbox
+
 [日本語](README.ja.md)
 
-# Claude Code Skills
-
-Custom skills for Claude Code to automate news aggregation and reporting.
+A collection of automation tools and custom skills for Claude Code.
 
 ## Skills
 
@@ -20,7 +20,3 @@ python3 -m venv .venv && source .venv/bin/activate && pip install -r requirement
 ```
 
 Configure `config/secrets.json` in each skill directory (refer to `secrets.example.json`).
-
-## License
-
-Private

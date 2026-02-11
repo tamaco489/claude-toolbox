@@ -36,8 +36,10 @@ MIME_TYPES_FALLBACK = {
 # パス設定
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 SKILL_DIR = os.path.dirname(SCRIPT_DIR)
+SKILL_NAME = os.path.basename(SKILL_DIR)
+PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(SKILL_DIR)))
 TEMPLATE_PATH = os.path.join(SKILL_DIR, 'templates', 'email_template.json')
-SECRETS_PATH = os.path.join(SKILL_DIR, 'config', 'secrets.json')
+SETTINGS_PATH = os.path.join(PROJECT_ROOT, 'secrets', 'settings.json')
 
 # 制限
 MAX_ATTACHMENTS = 5
@@ -68,16 +70,17 @@ def _get_env_or(key, default=''):
     return os.environ.get(key) or default
 
 
+def _load_skill_config():
+    """secret/settings.json から common + スキル別設定をマージして返す"""
+    data = _load_json(SETTINGS_PATH)
+    common = data.get('common', {})
+    skill = data.get('skills', {}).get(SKILL_NAME, {})
+    return {**common, **skill}
+
+
 def load_secrets():
     """秘匿情報を読み込む（環境変数優先）"""
-    secrets = _load_json(SECRETS_PATH, {
-        'smtp_server': 'smtp.gmail.com',
-        'smtp_port': 587,
-        'sender_email': '',
-        'sender_password': '',
-        'sender_name': '',
-        'default_recipient': ''
-    })
+    secrets = _load_skill_config()
     return {
         'server': _get_env_or('SMTP_SERVER', secrets.get('smtp_server', 'smtp.gmail.com')),
         'port': int(_get_env_or('SMTP_PORT', secrets.get('smtp_port', 587))),
