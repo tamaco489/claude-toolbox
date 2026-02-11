@@ -1,7 +1,6 @@
 ---
 name: ai-news-summary
 description: AIニュースを収集・要約してPDF生成・Slack投稿する
-allowed-tools: Bash, Read, Write, WebFetch
 ---
 
 # AIニュース要約・PDF・Slack投稿スキル

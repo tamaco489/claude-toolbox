@@ -1,7 +1,6 @@
 ---
 name: aws-blog-summary
 description: AWSブログの最新記事を収集・要約してPDF生成・Slack投稿する
-allowed-tools: Bash, Read, Write, WebFetch
 ---
 
 # AWSブログ要約・PDF・Slack投稿スキル

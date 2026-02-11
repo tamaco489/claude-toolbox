@@ -1,7 +1,6 @@
 ---
 name: report-email
 description: テンプレートに基づきPDFファイルを添付してメールを送信する
-allowed-tools: Bash, Read, Write, Glob, AskUserQuestion
 ---
 
 # レポートメール送信スキル

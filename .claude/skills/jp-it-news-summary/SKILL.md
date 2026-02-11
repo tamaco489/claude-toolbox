@@ -1,7 +1,6 @@
 ---
 name: jp-it-news-summary
 description: 国内ITニュースを収集・要約してPDF生成・Slack投稿する
-allowed-tools: Bash, Read, Write, WebFetch
 ---
 
 # 国内ITニュース要約・PDF・Slack投稿スキル
