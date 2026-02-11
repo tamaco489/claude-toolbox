@@ -16,7 +16,8 @@ python3 -m venv .venv && source .venv/bin/activate && pip install -r requirement
 
 ## Structure
 
-```
+```text
+secret/                        # GCP OAuth クライアントシークレット等（gitignore対象）
 .claude/skills/{skill-name}/
 ├── SKILL.md       # 実行手順・制約（スキル実行時はこれに従う）
 ├── config/        # secrets.json（gitignore対象）
