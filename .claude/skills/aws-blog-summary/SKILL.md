@@ -62,7 +62,7 @@ rm -f tmp/aws_raw_articles.json tmp/aws_summarized_articles.json
 まず、必要なパッケージがインストールされているか確認してください：
 
 ```bash
-pip install requests beautifulsoup4 feedparser reportlab fake-useragent
+pip install requests beautifulsoup4 feedparser reportlab fake-useragent google-api-python-client google-auth google-auth-oauthlib
 ```
 
 ### 3. ニュース取得
@@ -117,6 +117,16 @@ PDFファイルとサマリーをSlackに投稿してください：
 ```
 
 **注意**: Slack認証情報は `config/secrets.json` または環境変数で設定してください。
+
+### 7. Google Driveアップロード
+
+PDFファイルを Google Drive の指定フォルダにアップロードしてください：
+
+```bash
+./.claude/skills/aws-blog-summary/scripts/upload_gdrive.py output/aws-blog-YYYY-MM-DD.pdf
+```
+
+**注意**: Google Drive の認証情報 (OAuth クライアントシークレットのパス、フォルダ ID) は `config/secrets.json` または環境変数で設定してください。初回実行時はブラウザで Google アカウント認証が必要です。同名ファイルが既に存在する場合は上書きされます。
 
 ## 出力
 
