@@ -63,7 +63,7 @@ rm -f tmp/jp_raw_articles.json tmp/jp_summarized_articles.json
 まず、必要なパッケージがインストールされているか確認してください：
 
 ```bash
-pip install requests beautifulsoup4 feedparser reportlab fake-useragent
+pip install requests beautifulsoup4 feedparser reportlab fake-useragent google-api-python-client google-auth google-auth-oauthlib
 ```
 
 ### 3. ニュースソースの読み込み
@@ -123,6 +123,16 @@ PDFファイルのパスとサマリーをSlackに投稿してください：
 ```bash
 ./.claude/skills/jp-it-news-summary/scripts/post_slack.py output/jp-it-news-YYYY-MM-DD.pdf "本日の国内ITニュース要約です"
 ```
+
+### 8. Google Driveアップロード
+
+PDFファイルを Google Drive の指定フォルダにアップロードしてください：
+
+```bash
+./.claude/skills/jp-it-news-summary/scripts/upload_gdrive.py output/jp-it-news-YYYY-MM-DD.pdf
+```
+
+**注意**: Google Drive の認証情報 (OAuth クライアントシークレットのパス、フォルダ ID) は `config/secrets.json` または環境変数で設定してください。初回実行時はブラウザで Google アカウント認証が必要です。同名ファイルが既に存在する場合は上書きされます。
 
 ## 出力
 
