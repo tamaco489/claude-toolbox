@@ -20,7 +20,3 @@ python3 -m venv .venv && source .venv/bin/activate && pip install -r requirement
 ```
 
 各スキルの `config/secrets.json` に認証情報を設定（`secrets.example.json` を参照）。
-
-## ライセンス
-
-Private

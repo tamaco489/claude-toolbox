@@ -20,7 +20,3 @@ python3 -m venv .venv && source .venv/bin/activate && pip install -r requirement
 ```
 
 Configure `config/secrets.json` in each skill directory (refer to `secrets.example.json`).
-
-## License
-
-Private
