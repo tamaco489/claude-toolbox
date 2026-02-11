@@ -1,8 +1,8 @@
+# Claude Toolbox
+
 [English](README.md)
 
-# Claude Code スキル集
-
-ニュース収集・レポート作成を自動化する Claude Code 用カスタムスキル。
+Claude Code 用の自動化ツール・カスタムスキル集。
 
 ## スキル一覧
 

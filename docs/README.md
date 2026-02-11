@@ -1,8 +1,8 @@
+# Claude Toolbox
+
 [日本語](README.ja.md)
 
-# Claude Code Skills
-
-Custom skills for Claude Code to automate news aggregation and reporting.
+A collection of automation tools and custom skills for Claude Code.
 
 ## Skills
 
